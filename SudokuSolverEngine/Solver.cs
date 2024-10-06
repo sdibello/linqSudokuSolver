@@ -31,8 +31,8 @@ namespace SudokuSolverEngine.Solver
             if (puzzle == null)
                 throw new ApplicationException("Error Loading Puzzle");
 
-            Trace.WriteLine("Starting to process puzzle");
-            //writeEntirePuzzle(puzzle);
+            Console.WriteLine("Starting to process puzzle");
+            writeEntirePuzzle(puzzle);
             writeEntirePuzzelPossibles(puzzle);
 
             //take all items that are solved and clean up around them.
@@ -69,7 +69,7 @@ namespace SudokuSolverEngine.Solver
 
 
                 if (progressMade == false) {
-                    Trace.WriteLine("Quitting, nothing solved, but no recourse");
+                    Console.WriteLine("Quitting, nothing solved, but no recourse");
                     break;
                 }
             }
@@ -90,7 +90,7 @@ namespace SudokuSolverEngine.Solver
         }
 
         progressMade = true;
-        Trace.WriteLine(string.Format(">> Level One - Found ({0}) single possible", singlePoss.Count()));
+        Console.WriteLine(string.Format(">> Level One - Found ({0}) single possible", singlePoss.Count()));
         singlePoss.SetValuePossible(puzzle);
 
         //writeEntirePuzzle(puzzle);
@@ -125,8 +125,8 @@ namespace SudokuSolverEngine.Solver
             //if not, continue to the next one
             if (hits.Count > 0)
             {
-                //we have a winner.
-                Trace.WriteLine(string.Format(">> Level Two - Found ({0}) single possible by region", hits.Count()));
+                    //we have a winner.
+                Console.WriteLine(string.Format(">> Level Two - Found ({0}) single possible by region", hits.Count()));
                 foreach (var item in hits)
                 {
                     item winner;
@@ -167,9 +167,9 @@ namespace SudokuSolverEngine.Solver
             while (RowOrColOfBlock != null)
             {
                 int activeBlock = RowOrColOfBlock[0].Block;
-                //Trace.WriteLine(string.Format(">> Level 3 - Candidate Line Check ({0})", activeBlock));
+                //Console.WriteLine(string.Format(">> Level 3 - Candidate Line Check ({0})", activeBlock));
 
-                List<item> Unsolved = RowOrColOfBlock.Where(x => x.Value == null).ToList();
+                    List<item> Unsolved = RowOrColOfBlock.Where(x => x.Value == null).ToList();
                 //if there is only one, or less unknown, skip
                 if (Unsolved.Count <= 1) {
                     RowOrColOfBlock = factoryInBlock.getNext(BlockOfItems);                
@@ -205,8 +205,8 @@ namespace SudokuSolverEngine.Solver
                                 //if the counts are different (total items in row/col vs total items in block row/col) then remove the other possibles
                                 List<item> toRemove = column.Where(x => x.Block != activeBlock).Where(y => y.possibles != null).Where(z => z.possibles.Contains(i)).ToList();
                                 if (toRemove.Count > 0)
-                                { 
-                                    Trace.WriteLine(string.Format(">> Level 3 - Found candidate lines in column {0}", activeColumn));
+                                {
+                                    Console.WriteLine(string.Format(">> Level 3 - Found candidate lines in column {0}", activeColumn));
                                     toRemove.RemovePossibilities(i);
                                     this.progressMade = true;
                                     //writeEntirePuzzle(puzzle);
@@ -251,20 +251,20 @@ namespace SudokuSolverEngine.Solver
         IterationFactory factory = new IterationFactory();
         factory.iteration = IterationFactory.iterationType.standardRowColBlk;
         List<item> CurrentItems = factory.getNext(puzzle).ToList();
-        Trace.WriteLine("Starting Naked Pairs search");
+        Console.WriteLine("Starting Naked Pairs search");
         
         //loop through all the rows, then the columns
         while (CurrentItems != null) {
             List<item> onlyActive = CurrentItems.Where(x => x.possibles != null).ToList();
-            //for debugging only
-            //if (factory.Currently == IterationFactory.currentIteration.Row)
-            //    Trace.WriteLine(string.Format("Level 4: Naked Pair.. processing row {0} ", factory.rowIndex));
-            //else if (factory.Currently == IterationFactory.currentIteration.Column)
-            //    Trace.WriteLine(string.Format("Level 4: Naked Pair.. processing column {0} ", factory.colIndex));
-            //else
-            //    Trace.WriteLine(string.Format("Level 4: Naked Pair.. processing block {0} ", factory.BlockIndex));
+                //for debugging only
+                //if (factory.Currently == IterationFactory.currentIteration.Row)
+                //    Console.WriteLine(string.Format("Level 4: Naked Pair.. processing row {0} ", factory.rowIndex));
+                //else if (factory.Currently == IterationFactory.currentIteration.Column)
+                //    Console.WriteLine(string.Format("Level 4: Naked Pair.. processing column {0} ", factory.colIndex));
+                //else
+                //    Console.WriteLine(string.Format("Level 4: Naked Pair.. processing block {0} ", factory.BlockIndex));
 
-            if (onlyActive.Count > 0) {
+                if (onlyActive.Count > 0) {
                 List<int> completeUniquePossibles = onlyActive.getPossibleUnique();
                 List<MatrixItem> possibilityMatrix = new List<MatrixItem>();
                 possibilityMatrix = onlyActive.generatePossiblityMatrix();
@@ -273,17 +273,17 @@ namespace SudokuSolverEngine.Solver
                 List<MatrixItem> Candidates = possibilityMatrix.Where(x => x.items.Count == 2).Where(z => z.UnquePossibles.Count == 2).ToList();
                 foreach (var item in Candidates) {
                     if (factory.Currently == IterationFactory.currentIteration.Row)
-                        Trace.WriteLine(string.Format("Possible Naked Pair ({0},{1}) in row {2} ", item.ControlPossibles[0].ToString(), item.ControlPossibles[1].ToString(), factory.rowIndex.ToString()));
+                            Console.WriteLine(string.Format("Possible Naked Pair ({0},{1}) in row {2} ", item.ControlPossibles[0].ToString(), item.ControlPossibles[1].ToString(), factory.rowIndex.ToString()));
                     else if (factory.Currently == IterationFactory.currentIteration.Column)
-                        Trace.WriteLine(string.Format("Possible Naked Pair ({0},{1}) in column {2}", item.ControlPossibles[0].ToString(), item.ControlPossibles[1].ToString(), factory.colIndex.ToString()));
+                            Console.WriteLine(string.Format("Possible Naked Pair ({0},{1}) in column {2}", item.ControlPossibles[0].ToString(), item.ControlPossibles[1].ToString(), factory.colIndex.ToString()));
                     else
-                        Trace.WriteLine(string.Format("Possible Naked Pair ({0},{1}) in block {2} ", item.ControlPossibles[0].ToString(), item.ControlPossibles[1].ToString(), factory.BlockIndex.ToString()));
+                            Console.WriteLine(string.Format("Possible Naked Pair ({0},{1}) in block {2} ", item.ControlPossibles[0].ToString(), item.ControlPossibles[1].ToString(), factory.BlockIndex.ToString()));
 
                     //remove the candidates unique keys from the items to clean list 
                     List<int> candidateKeys = Candidates.getUnqiues();
                     List<item> remove = onlyActive.Where(x => candidateKeys.Contains(x.unique) == false).ToList();
-                    //Trace.WriteLine(string.Format("Possible Naked Pair items to clean {0} ", remove.Count.ToString()));
-                    int count;
+                        //Console.WriteLine(string.Format("Possible Naked Pair items to clean {0} ", remove.Count.ToString()));
+                        int count;
 
                     foreach (int controlRemove in item.ControlPossibles) {
                         remove.RemovePossibilities(controlRemove, out count);
@@ -343,7 +343,7 @@ namespace SudokuSolverEngine.Solver
         IterationFactory factory = new IterationFactory();
         factory.iteration = IterationFactory.iterationType.standardRowColBlk;
         List<item> CurrentItems = factory.getNext(puzzle).ToList();
-        Trace.WriteLine("Level 5: Starting Triples search");
+            Console.WriteLine("Level 5: Starting Triples search");
 
         //loop through all the rows, then the columns
         while (CurrentItems != null)
@@ -352,11 +352,11 @@ namespace SudokuSolverEngine.Solver
 
             //for debugging only
             if (factory.Currently == IterationFactory.currentIteration.Row)
-                Trace.WriteLine(string.Format("Level 5: Triples .. processing row {0} ", factory.rowIndex));
+                Console.WriteLine(string.Format("Level 5: Triples .. processing row {0} ", factory.rowIndex));
             else if (factory.Currently == IterationFactory.currentIteration.Column)
-                Trace.WriteLine(string.Format("Level 5: Triples.. processing column {0} ", factory.colIndex));
+                Console.WriteLine(string.Format("Level 5: Triples.. processing column {0} ", factory.colIndex));
             else
-                Trace.WriteLine(string.Format("Level 5: Triples.. processing block {0} ", factory.BlockIndex));
+                Console.WriteLine(string.Format("Level 5: Triples.. processing block {0} ", factory.BlockIndex));
 
             if (onlyActive.Count > 0)
             {
@@ -368,7 +368,7 @@ namespace SudokuSolverEngine.Solver
                     List<MatrixItem> step25 = new List<MatrixItem>();
                     foreach (var item in step2)
                     {
-                        item.items.Remove(item);
+                        //item.items.Remove(item);
                     }                    
                 }
 
@@ -459,7 +459,7 @@ namespace SudokuSolverEngine.Solver
     
     }
 
-    #region Trace Output
+    #region Console Output
     private void writeEntirePuzzle(List<item> puzzle)
     {
         for (int i = 1; i <= 9; i++)
@@ -499,14 +499,14 @@ namespace SudokuSolverEngine.Solver
             }
             RowOut.Append(string.Format("({0,9})", internalTemp.ToString()));
         }
-        Trace.WriteLine(RowOut.ToString());
+        Console.WriteLine(RowOut.ToString());
     }
 
-    /// <summary>
-    /// outputs a row for the puzzle to trace
-    /// </summary>
-    /// <param name="row"></param>
-    private void writeDebugRow(List<item> row)
+        /// <summary>
+        /// outputs a row for the puzzle to Console
+        /// </summary>
+        /// <param name="row"></param>
+        private void writeDebugRow(List<item> row)
     {
         StringBuilder RowOut = new StringBuilder();
         RowOut.Append(string.Format("Row-Out ({0}) ", row.First().Row.ToString()));
@@ -521,7 +521,7 @@ namespace SudokuSolverEngine.Solver
 
             RowOut.Append(string.Format(" {0} ", outPutValue)); 
 	    }
-        Trace.WriteLine(RowOut.ToString());
+            Console.WriteLine(RowOut.ToString());
     }
     #endregion
 
