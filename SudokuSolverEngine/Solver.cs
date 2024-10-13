@@ -265,32 +265,32 @@ namespace SudokuSolverEngine.Solver
                 //    Console.WriteLine(string.Format("Level 4: Naked Pair.. processing block {0} ", factory.BlockIndex));
 
                 if (onlyActive.Count > 0) {
-                List<int> completeUniquePossibles = onlyActive.getPossibleUnique();
-                List<MatrixItem> possibilityMatrix = new List<MatrixItem>();
-                possibilityMatrix = onlyActive.generatePossiblityMatrix();
+                    List<int> completeUniquePossibles = onlyActive.getPossibleUnique();
+                    List<MatrixItem> possibilityMatrix = new List<MatrixItem>();
+                    possibilityMatrix = onlyActive.generatePossiblityMatrix();
 
-                // NAKED PAIR
-                List<MatrixItem> Candidates = possibilityMatrix.Where(x => x.items.Count == 2).Where(z => z.UnquePossibles.Count == 2).ToList();
-                foreach (var item in Candidates) {
-                    if (factory.Currently == IterationFactory.currentIteration.Row)
-                            Console.WriteLine(string.Format("Possible Naked Pair ({0},{1}) in row {2} ", item.ControlPossibles[0].ToString(), item.ControlPossibles[1].ToString(), factory.rowIndex.ToString()));
-                    else if (factory.Currently == IterationFactory.currentIteration.Column)
-                            Console.WriteLine(string.Format("Possible Naked Pair ({0},{1}) in column {2}", item.ControlPossibles[0].ToString(), item.ControlPossibles[1].ToString(), factory.colIndex.ToString()));
-                    else
-                            Console.WriteLine(string.Format("Possible Naked Pair ({0},{1}) in block {2} ", item.ControlPossibles[0].ToString(), item.ControlPossibles[1].ToString(), factory.BlockIndex.ToString()));
+                    // NAKED PAIR
+                    List<MatrixItem> Candidates = possibilityMatrix.Where(x => x.items.Count == 2).Where(z => z.UnquePossibles.Count == 2).ToList();
+                    foreach (var item in Candidates) {
+                        if (factory.Currently == IterationFactory.currentIteration.Row)
+                                Console.WriteLine(string.Format("Possible Naked Pair ({0},{1}) in row {2} ", item.ControlPossibles[0].ToString(), item.ControlPossibles[1].ToString(), factory.rowIndex.ToString()));
+                        else if (factory.Currently == IterationFactory.currentIteration.Column)
+                                Console.WriteLine(string.Format("Possible Naked Pair ({0},{1}) in column {2}", item.ControlPossibles[0].ToString(), item.ControlPossibles[1].ToString(), factory.colIndex.ToString()));
+                        else
+                                Console.WriteLine(string.Format("Possible Naked Pair ({0},{1}) in block {2} ", item.ControlPossibles[0].ToString(), item.ControlPossibles[1].ToString(), factory.BlockIndex.ToString()));
 
-                    //remove the candidates unique keys from the items to clean list 
-                    List<int> candidateKeys = Candidates.getUnqiues();
-                    List<item> remove = onlyActive.Where(x => candidateKeys.Contains(x.unique) == false).ToList();
-                        //Console.WriteLine(string.Format("Possible Naked Pair items to clean {0} ", remove.Count.ToString()));
-                        int count;
+                        //remove the candidates unique keys from the items to clean list 
+                        List<int> candidateKeys = Candidates.getUnqiues();
+                        List<item> remove = onlyActive.Where(x => candidateKeys.Contains(x.unique) == false).ToList();
+                            //Console.WriteLine(string.Format("Possible Naked Pair items to clean {0} ", remove.Count.ToString()));
+                            int count;
 
-                    foreach (int controlRemove in item.ControlPossibles) {
-                        remove.RemovePossibilities(controlRemove, out count);
-                        if (count > 0)
-                            progressMade = true;
+                        foreach (int controlRemove in item.ControlPossibles) {
+                            remove.RemovePossibilities(controlRemove, out count);
+                            if (count > 0)
+                                progressMade = true;
+                        }
                     }
-                }
 
                 ////NAKED TRIPLE
                 //if (progressMade == false)
@@ -331,7 +331,7 @@ namespace SudokuSolverEngine.Solver
                 //    }
 
                 //}
-            }
+                }
 
             CurrentItems = factory.getNext(puzzle) ?? null;
         }
